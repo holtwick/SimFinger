@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
+		232EA17C1071CD6F009F628C /* Finger_Down.png in Resources */ = {isa = PBXBuildFile; fileRef = 232EA17A1071CD6F009F628C /* Finger_Down.png */; };
+		232EA17D1071CD6F009F628C /* Finger_Hover.png in Resources */ = {isa = PBXBuildFile; fileRef = 232EA17B1071CD6F009F628C /* Finger_Hover.png */; };
 		2B4EC09B10301F3800042E09 /* FadeFrameLandscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B4EC09A10301F3800042E09 /* FadeFrameLandscape.png */; };
 		5E4D86630F45EC4700E02F03 /* FakeAppStore in Resources */ = {isa = PBXBuildFile; fileRef = 5E4D86270F45EC4700E02F03 /* FakeAppStore */; };
 		5E4D86640F45EC4700E02F03 /* FakeAppStore.sb in Resources */ = {isa = PBXBuildFile; fileRef = 5E4D862A0F45EC4700E02F03 /* FakeAppStore.sb */; };
@@ -62,6 +64,8 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		232EA17A1071CD6F009F628C /* Finger_Down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Finger_Down.png; sourceTree = "<group>"; };
+		232EA17B1071CD6F009F628C /* Finger_Hover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Finger_Hover.png; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -190,6 +194,8 @@
 			children = (
 				5E4D86810F45EC4A00E02F03 /* FakeApps */,
 				5EA7CEEF0F43EECC00DE24FB /* Hover.png */,
+				232EA17B1071CD6F009F628C /* Finger_Hover.png */,
+				232EA17A1071CD6F009F628C /* Finger_Down.png */,
 				5EA7CF180F43F90F00DE24FB /* Active.png */,
 				5EA7D0600F450EF500DE24FB /* FadeFrame.png */,
 				2B4EC09A10301F3800042E09 /* FadeFrameLandscape.png */,
@@ -341,6 +347,8 @@
 				2B4EC09B10301F3800042E09 /* FadeFrameLandscape.png in Resources */,
 				5E8B471B10504F9F00DF6DFB /* iPhoneFrameLandscape_right.png in Resources */,
 				5E8B471C10504F9F00DF6DFB /* iPhoneFrameLandscape_left.png in Resources */,
+				232EA17C1071CD6F009F628C /* Finger_Down.png in Resources */,
+				232EA17D1071CD6F009F628C /* Finger_Hover.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,6 +25,11 @@
 	IBOutlet NSPanel *setTextPanel;
 	IBOutlet NSTextField *setTextLabel;
 	IBOutlet NSTextField *setTextField;
+	
+	IBOutlet NSPanel *preferencesPanel;
+	
+	NSString* hoverImageName;
+	NSString* clickImageName;
 }
 
 - (AXUIElementRef)simulatorApplication;
@@ -41,5 +46,9 @@
 - (IBAction)saveSetText:(id)sender;
 
 - (IBAction)installFakeApps:(id)sender;
+
+- (IBAction)showPreferences:(id)sender;
+
+- (IBAction)rearrangeFakeApps:(id)sender;
 
 @end

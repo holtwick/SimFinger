@@ -41,7 +41,12 @@ void WindowFrameDidChangeCallback( AXObserverRef observer, AXUIElementRef elemen
 		
 }
 
-
+- (void)openUniversalAccessPrefPane
+{
+	NSAppleScript *a = [[NSAppleScript alloc] initWithSource:@"tell application \"System Preferences\"\nactivate\nset current pane to pane \"com.apple.preference.universalaccess\"\nend tell"];
+	[a executeAndReturnError:nil];
+	[a release];
+}
 
 - (AXUIElementRef)simulatorApplication {
 	if(AXAPIEnabled())
@@ -64,7 +69,11 @@ void WindowFrameDidChangeCallback( AXObserverRef observer, AXUIElementRef elemen
 			}
 		}
 	} else {
-		NSRunAlertPanel(@"Universal Access Disabled", @"You must enable access for assistive devices in the System Preferences, under Universal Access.", @"OK", nil, nil, nil);
+		int result = NSRunAlertPanel(@"Universal Access Disabled", @"You must enable access for assistive devices in the System Preferences, under Universal Access.", @"OK", @"Open Universal Access", nil);
+		if(result == NSAlertAlternateReturn)
+		{
+			[self openUniversalAccessPrefPane];
+		}
 	}
 	return NULL;
 }
@@ -73,7 +82,7 @@ void WindowFrameDidChangeCallback( AXObserverRef observer, AXUIElementRef elemen
 {
 				
 	AXUIElementRef element = [self simulatorApplication];
-	
+	if (!element) return;
 	CFArrayRef attributeNames;
 	AXUIElementCopyAttributeNames(element, &attributeNames);
 	
@@ -258,9 +267,14 @@ enum {
 					  @"FakeStocks",
 					  @"FakeText",
                       @"FakeVoiceMemos",
-					  @"FakeWeather",
 					  @"FakeYouTube",
+					  @"FakeWeather",
 					  nil];
+	if(![[NSFileManager defaultManager] fileExistsAtPath:[@"~/Library/Application Support/iPhone Simulator/User/Applications" stringByExpandingTildeInPath]])
+	{
+		[[NSFileManager defaultManager] createDirectoryAtPath:[@"~/Library/Application Support/iPhone Simulator/User/Applications/" stringByExpandingTildeInPath] withIntermediateDirectories:YES attributes:nil error:nil];
+	}
+	
 	for(NSString *item in items)
 	{
 		NSString *srcDir = [[NSBundle mainBundle] resourcePath];
@@ -282,23 +296,110 @@ enum {
 	NSRunAlertPanel(@"Fake Apps Installed", @"Fake Apps have been installed in iPhone Simulator.  Please restart iPhone Simulator for changes to take effect.", @"OK", nil, nil);
 }
 
+// iconState2 is a dictionary that declares how the apps are arranged and has 2 arrays, buttonBar and iconLists.
+//
+// buttonBar is an array with the only element being another array that consists of 4 strings. Each string represents the bundle identifier of the app in the dock. For example, to add safari to the dock, add the string "com.apple.mobilesafari"
+//
+// iconLists is an array of arrays that each represent one page. Within each page array, there are 4 more array to represent the 4 rows. Just like the dock, an app is the bundle identifier. An empty space is the number 0.
+//
+// The bundle identifiers for the fake apps "com.yourcompany.?", where the question mark is the app name (keeping capitalization and replacing spaces with underscores).
+//
+// The bundle identifiers for the Apple apps are as follows:
+//
+// Address Book -- com.apple.MobileAddressBook
+// Photos       -- com.apple.mobileslideshow-Photos
+// Safari       -- com.apple.mobilesafari
+// Settings     -- com.apple.Preferences
 
+
+// TODO:  RE. FAC. TOR.
+- (IBAction)rearrangeFakeApps:(id)sender
+{
+	int result = NSRunAlertPanel(@"Rearrange Fake Apps?", @"Rearranging the fake apps in the Apple default 3.0 layout will remove any previous apps you have installed (aside from the fake apps). Do you still want to continue?", @"No", @"Yes", nil);
+	if(result != NSAlertAlternateReturn) return;
+	
+	NSMutableDictionary *iconState2 = [[NSMutableDictionary alloc] init];
+	
+	
+	NSMutableArray *buttonBar = [[NSMutableArray alloc] init];
+	
+	NSMutableArray *dock = [[NSMutableArray alloc] init];
+	[dock addObject:@"com.yourcompany.Phone"];
+	[dock addObject:@"com.yourcompany.Mail"];
+	[dock addObject:@"com.apple.mobilesafari"];
+	[dock addObject:@"com.yourcompany.iPod"];
+	[buttonBar addObject:dock];
+	
+	[iconState2 setObject:buttonBar forKey:@"buttonBar"];
+	
+	
+	NSMutableArray *iconLists = [[NSMutableArray alloc] init];
+	
+	NSMutableArray *firstScreen = [[NSMutableArray alloc] init];
+	
+	NSMutableArray *firstScreenFirstRow = [[NSMutableArray alloc] init];
+	[firstScreenFirstRow addObject:@"com.yourcompany.Messages"];
+	[firstScreenFirstRow addObject:@"com.yourcompany.Calendar"];
+	[firstScreenFirstRow addObject:@"com.apple.mobileslideshow-Photos"];
+	[firstScreenFirstRow addObject:@"com.yourcompany.Camera"];
+	[firstScreen addObject:firstScreenFirstRow];
+	
+	NSMutableArray *firstScreenSecondRow = [[NSMutableArray alloc] init];
+	[firstScreenSecondRow addObject:@"com.yourcompany.YouTube"];
+	[firstScreenSecondRow addObject:@"com.yourcompany.Stocks"];
+	[firstScreenSecondRow addObject:@"com.yourcompany.Maps"];
+	[firstScreenSecondRow addObject:@"com.yourcompany.Weather"];
+	[firstScreen addObject:firstScreenSecondRow];
+	
+	NSMutableArray *firstScreenThirdRow = [[NSMutableArray alloc] init];
+	[firstScreenThirdRow addObject:@"com.yourcompany.Voice_Memos"];
+	[firstScreenThirdRow addObject:@"com.yourcompany.Notes"];
+	[firstScreenThirdRow addObject:@"com.yourcompany.Clock"];
+	[firstScreenThirdRow addObject:@"com.yourcompany.Calculator"];
+	[firstScreen addObject:firstScreenThirdRow];
+	
+	NSMutableArray *firstScreenFourthRow = [[NSMutableArray alloc] init];
+	[firstScreenFourthRow addObject:@"com.apple.Preferences"];
+	[firstScreenFourthRow addObject:@"com.yourcompany.iTunes"];
+	[firstScreenFourthRow addObject:@"com.yourcompany.App_Store"];
+	[firstScreenFourthRow addObject:@"com.yourcompany.Compass"];
+	[firstScreen addObject:firstScreenFourthRow];
+	
+	[iconLists addObject:firstScreen];
+	
+	NSMutableArray *secondScreen = [[NSMutableArray alloc] init];
+	
+	NSMutableArray *secondScreenFirstRow = [[NSMutableArray alloc] init];
+	[secondScreenFirstRow addObject:@"com.apple.MobileAddressBook"];
+	[secondScreen addObject:secondScreenFirstRow];
+	
+	[iconLists addObject:secondScreen];
+	
+	[iconState2 setObject:iconLists forKey:@"iconLists"];
+	
+	[[self springboardPrefs] setObject:iconState2 forKey:@"iconState2"];
+	[self saveSpringboardPrefs];
+	NSRunAlertPanel(@"Fake Apps Rearranged", @"Fake Apps have been rearranged to the Apple layout in iPhone Simulator.  Please restart iPhone Simulator for changes to take effect.", @"OK", nil, nil);
+}
 
 
 - (void)_updateWindowPosition
 {
 	NSPoint p = [NSEvent mouseLocation];
-	[pointerOverlay setFrameOrigin:NSMakePoint(p.x - 25, p.y - 25)];
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"cursorIsFinger"])
+		[pointerOverlay setFrameOrigin:NSMakePoint(p.x - 296, p.y - 610)];		
+	else
+		[pointerOverlay setFrameOrigin:NSMakePoint(p.x - 25, p.y - 25)];
 }
 
 - (void)mouseDown
 {
-	[pointerOverlay setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:@"Active"]]];
+	[pointerOverlay setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:clickImageName]]];
 }
 
 - (void)mouseUp
 {
-	[pointerOverlay setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:@"Hover"]]];
+	[pointerOverlay setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:hoverImageName]]];
 }
 
 - (void)mouseMoved
@@ -374,11 +475,19 @@ CGEventRef tapCallBack(CGEventTapProxy proxy, CGEventType type, CGEventRef event
 	
 	screenRect = [[hardwareOverlay screen] frame];
 	
-	pointerOverlay = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 50, 50) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
-	[pointerOverlay setAlphaValue:0.8];
+	hoverImageName = [[NSUserDefaults standardUserDefaults] boolForKey:@"cursorIsFinger"] ? @"Finger_Hover" : @"Hover";
+	clickImageName = [[NSUserDefaults standardUserDefaults] boolForKey:@"cursorIsFinger"] ? @"Finger_Down" : @"Active";
+
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"cursorIsFinger"]) {
+		pointerOverlay = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 677) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+	} else {
+		pointerOverlay = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 50, 50) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+		[pointerOverlay setAlphaValue:0.8];
+	}
 	[pointerOverlay setOpaque:NO];
-	[pointerOverlay setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:@"Hover"]]];
-	[pointerOverlay setLevel:NSFloatingWindowLevel];
+	[pointerOverlay setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:hoverImageName]]];
+	int windowLevel = [[NSUserDefaults standardUserDefaults] boolForKey:@"cursorIsAboveEverything"] ? NSScreenSaverWindowLevel : NSFloatingWindowLevel;
+	[pointerOverlay setLevel:windowLevel];
 	[pointerOverlay setIgnoresMouseEvents:YES];
 	[self _updateWindowPosition];
 	[pointerOverlay orderFront:nil];
@@ -409,8 +518,24 @@ CGEventRef tapCallBack(CGEventTapProxy proxy, CGEventType type, CGEventRef event
 	CFRelease(runLoopSource);
 	CFRelease(tap);
 	
+	[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(simulatorDidLaunch:) name:NSWorkspaceDidLaunchApplicationNotification object:nil];
+	
 	[self registerForSimulatorWindowResizedNotification];
 	[self positionSimulatorWindow:nil];
+}
+
+- (void)simulatorDidLaunch:(NSNotification *)aNotification
+{
+	if([[[aNotification userInfo] objectForKey:@"NSApplicationName"] isEqualToString:@"iPhone Simulator"])
+	{
+		[self positionSimulatorWindow:nil];
+	}
+}
+
+- (IBAction)showPreferences:(id)sender
+{
+	[preferencesPanel setLevel:NSFloatingWindowLevel + 2];
+	[preferencesPanel makeKeyAndOrderFront:nil];
 }
 
 @end
